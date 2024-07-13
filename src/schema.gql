@@ -29,14 +29,6 @@ type Reaction {
   userIds: [String!]!
 }
 
-type ChatConversation {
-  id: ID!
-  unreadMessageCount: Int
-  lastMessage: ChatMessage
-  pinnedMessages: [ChatMessage!]!
-  pinnedMessagesCount: Int!
-}
-
 type UserField {
   id: String
 }
@@ -119,6 +111,14 @@ type PaginatedChatMessages {
   hasMore: Boolean!
 }
 
+type ChatConversation {
+  id: ID!
+  unreadMessageCount: Int
+  lastMessage: ChatMessage
+  pinnedMessages: [ChatMessage!]!
+  pinnedMessagesCount: Int!
+}
+
 type LastRead {
   userId: String!
   conversationId: String!
@@ -181,6 +181,7 @@ input MessageDto {
   text: String!
   conversationId: ObjectId!
   richContent: RichContentDto
+  tags: [Tag!]!
 }
 
 input RichContentDto {
@@ -223,6 +224,11 @@ input PollDto {
 input PollOptionDto {
   option: String!
   votes: [ObjectId!] = []
+}
+
+input Tag {
+  id: String!
+  type: String!
 }
 
 input DeleteMessageDto {

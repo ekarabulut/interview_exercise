@@ -21,6 +21,7 @@ import {
   LikeMessageDto,
   ResolveMessageDto,
   ReactionDto,
+  Tag
 } from './models/message.dto';
 import { MessageLogic } from './message.logic';
 import {
@@ -58,7 +59,7 @@ export class MessageResolver {
   async sendConversationMessage(
     @Args('messageDto') messageDto: MessageDto,
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
-  ): Promise<ChatMessage> {
+  ): Promise<ChatMessage> {   
     return await this.messageLogic.create(messageDto, authenticatedUser);
   }
 

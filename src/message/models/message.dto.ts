@@ -109,6 +109,14 @@ export class RichContentDto {
 }
 
 @InputType()
+export class Tag {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  type: string;
+}
+@InputType()
 export class MessageDto {
   @Field()
   text: string;
@@ -118,6 +126,9 @@ export class MessageDto {
 
   @Field(() => RichContentDto, { nullable: true })
   richContent?: RichContentDto;
+
+  @Field(() => [Tag], { nullable: false })
+  tags: Tag[];
 }
 
 // TODO Min - Max on limit

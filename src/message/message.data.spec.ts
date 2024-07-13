@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectID } from 'mongodb';
 import { MessageData } from './message.data';
 import { ChatMessageModel, ChatMessageSchema } from './models/message.model';
+import { Tag } from './models/message.dto'
 
 import { ConfigManagerModule } from '../configuration/configuration-manager.module';
 import {getTestConfiguration}  from '../configuration/configuration-manager.utils';
@@ -67,7 +68,7 @@ describe('MessageData', () => {
     it('successfully creates a message', async () => {
       const conversationId = new ObjectID();
       const message = await messageData.create(
-        { conversationId, text: 'Hello world' },
+        { conversationId, text: 'Hello world', tags: [] },
         senderId,
       );
 
@@ -98,7 +99,7 @@ describe('MessageData', () => {
     it('successfully gets a message', async () => {
       const conversationId = new ObjectID();
       const sentMessage = await messageData.create(
-        { conversationId, text: 'Hello world' },
+        { conversationId, text: 'Hello world', tags: [] },
         senderId,
       );
 
@@ -112,7 +113,7 @@ describe('MessageData', () => {
     it('successfully marks a message as deleted', async () => {
       const conversationId = new ObjectID();
       const message = await messageData.create(
-        { conversationId, text: 'Message to delete' },
+        { conversationId, text: 'Message to delete', tags: [] },
         senderId,
       );
 
@@ -125,6 +126,42 @@ describe('MessageData', () => {
       // And that is it now deleted
       const retrievedMessage = await messageData.getMessage(message.id.toHexString())
       expect(retrievedMessage.deleted).toEqual(true);
+    });   
+  });
+
+  describe('tag', () => {    
+    let tag1 = new Tag();
+    let tag2 = new Tag();
+    tag1.id = new ObjectID().toString();
+    tag1.type = "tag1";
+    tag2.id = new ObjectID().toString();
+    tag2.type = "tag2";
+    let tags = [tag1, tag2];
+
+    it('should add or update tags on a message', async () => {
+      const conversationId = new ObjectID();
+      const message = await messageData.create(
+        { conversationId, text: 'Message to add or update tags', tags: [] },
+        senderId,
+      );       
+  
+      const updatedMessage = await messageData.addOrUpdateTags(new ObjectID(message.id), tags);
+  
+      expect(updatedMessage.tags).toEqual(tags);
+    });
+
+    it('should find messages by tags', async () => {
+     
+      const message = await messageData.create(
+        { conversationId, text: 'Message with a specific tag', tags: [tag1] },
+        senderId,
+      );
+  
+      const result = await messageData.findMessagesByTags([tag1]);
+      
+      expect(result.length).toBe(1);
+      expect(result[0].tags[0].type).toBe(message.tags[0].type);
     });
   });
+
 });
